@@ -317,6 +317,60 @@ function drawPenguin(ctx)
   // Hips/Legs (Attached to body)
   var left_leg_poly = leg_poly.slice();
   var right_leg_poly = leg_poly.slice();
+  // Left leg
+  var left_leg_offset = [70, 190];
+  var left_leg_joint = [0, -40];
+  var left_leg_T = composeTransforms(
+		rotationAboutPoint(hip_angles[1], left_leg_joint),
+		translateByOffset(left_leg_offset));
+  left_leg_poly = transformPolygon(left_leg_poly, left_leg_T);
+  left_leg_poly = transformPolygon(left_leg_poly, torso_T);
+  drawPolygon(ctx, left_leg_poly);
+  hip_joints[1] = transformPoint(left_leg_joint, left_leg_T);
+  hip_joints[1] = transformPoint(hip_joints[1], torso_T);
+  drawCircle(ctx, hip_joints[1][0], hip_joints[1][1], hip_joint_r);
+  // Right leg
+  var right_leg_offset = [-70, 180];
+  var right_leg_joint = [0, -40];
+  var right_leg_T = composeTransforms(
+		rotationAboutPoint(hip_angles[0], right_leg_joint),
+		translateByOffset(right_leg_offset));
+  right_leg_poly = transformPolygon(right_leg_poly, right_leg_T);
+  right_leg_poly = transformPolygon(right_leg_poly, torso_T);
+  drawPolygon(ctx, right_leg_poly);
+  hip_joints[0] = transformPoint(right_leg_joint, right_leg_T);
+  hip_joints[0] = transformPoint(hip_joints[0], torso_T);
+  drawCircle(ctx, hip_joints[0][0], hip_joints[0][1], hip_joint_r);
+  
+  // Feet (Attached to legs)
+  var right_foot_poly = foot_poly.slice();
+  var left_foot_poly = foot_poly.slice();
+  // Right foot
+  var right_foot_offset = [-55, 40];
+  var right_foot_joint = [48, 0];
+  var right_foot_T = composeTransforms(
+		rotationAboutPoint(ankle_angles[0], right_foot_joint),
+		translateByOffset(right_foot_offset));
+  right_foot_T = composeTransforms(right_foot_T, right_leg_T);
+  right_foot_poly = transformPolygon(right_foot_poly, right_foot_T);
+  right_foot_poly = transformPolygon(right_foot_poly, torso_T);
+  drawPolygon(ctx, right_foot_poly);
+  ankle_joints[0] = transformPoint(right_foot_joint, right_foot_T);
+  ankle_joints[0] = transformPoint(ankle_joints[0], torso_T);
+  drawCircle(ctx, ankle_joints[0][0], ankle_joints[0][1], ankle_joint_r);
+  // Left foot
+  var left_foot_offset = [-55, 40];
+  var left_foot_joint = [48, 0];
+  var left_foot_T = composeTransforms(
+		rotationAboutPoint(ankle_angles[1], left_foot_joint),
+		translateByOffset(left_foot_offset));
+  left_foot_T = composeTransforms(left_foot_T, left_leg_T);
+  left_foot_poly = transformPolygon(left_foot_poly, left_foot_T);
+  left_foot_poly = transformPolygon(left_foot_poly, torso_T);
+  drawPolygon(ctx, left_foot_poly);
+  ankle_joints[1] = transformPoint(left_foot_joint, left_foot_T);
+  ankle_joints[1] = transformPoint(ankle_joints[1], torso_T);
+  drawCircle(ctx, ankle_joints[1][0], ankle_joints[1][1], ankle_joint_r);
 }
 
 
