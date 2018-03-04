@@ -23,5 +23,40 @@ uniform vec3 lightPos; // Light position in camera space
 void main() {
   // Your solution should go here.
   // Only the background color calculations have been provided as an example.
-  gl_FragColor = vec4(diffuseColor, 1.0);
+  // gl_FragColor = vec4(diffuseColor * Kd, 1.0);
+  
+  // Halftone requires a grid of dots coloured by the ambient colour, which are
+  // decreased in size by the dot product for the diffuse calculation.
+  
+  // Light values
+  vec3 ambient, diffuse; 
+  vec3 norm = normalize(normalInterp);
+  vec3 lightdir = normalize(vec3(lightPos - vertPos));
+
+  // Ambient Lighting
+  ambient = ambientColor * Ka;
+  
+  // Diffuse Lighting
+  float dotprod = max(dot(lightdir,norm), 0.0);
+  diffuse = diffuseColor * Kd * dotprod;
+  
+  // No specular lighting
+  
+  // Halftone specific grid creation
+  // Get center pixel coordinate for circle
+  vec2 pixel = floor(vec2(gl_FragCoord.xy));
+  float thickness = 10.0; // Thickness of circles
+  pixel = mod(pixel, vec2(thickness));
+  // 
+  float b = thickness / 2.0;
+  float a = distance(pixel, vec2(b)) / (thickness * 0.65); // Larger a value = more diffuse colour
+  if (a < 1.0) {
+	  a += diffuse.r + diffuse.g + diffuse.b; // Prevent weird artifacts
+  }
+  // Exagerate circles for definition, clamp between 0 and 1 to avoid colour bleed
+  float circles = clamp(pow(a,5.0), 0.0, 1.0); // Without clamping, render looks very strange
+  
+  // Base colour is purposely set to be the ambient colour. I wanted to be able to have
+  // different coloured circles.
+  gl_FragColor = vec4(ambient + (diffuseColor * circles), 1.0);
 }
