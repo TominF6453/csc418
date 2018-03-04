@@ -21,5 +21,23 @@ uniform vec3 lightPos; // Light position in camera space
 void main() {
   // Your solution should go here.
   // Only the ambient colour calculations have been provided as an example.
-  gl_FragColor = vec4(ambientColor, 1.0);
+  
+  // Light values
+  vec3 ambient, diffuse, specular; 
+  vec3 norm = normalize(normalInterp);
+  vec3 lightdir = normalize(vec3(lightPos - vertPos));
+  vec3 view = normalize(-vertPos);
+  vec3 reflec = reflect(-lightdir, norm);
+  
+  // Ambient Lighting
+  ambient = ambientColor * Ka;
+  
+  // Diffuse Lighting
+  float dotprod = max(dot(lightdir,norm), 0.0);
+  diffuse = diffuseColor * Kd * dotprod;
+  
+  // Specular Lighting
+  specular = specularColor * Ks * pow(max(dot(reflec, view), 0.0), shininessVal);
+  
+  gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
 }
