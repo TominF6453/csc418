@@ -16,4 +16,5 @@ void main() {
   // Your solution should go here.
   vec4 vertPos4 = modelview * vec4(position, 1.0);
   gl_Position = projection * vertPos4;
+  texCoordInterp = vec2(texCoord.s, 1.0 - texCoord.t);
 }

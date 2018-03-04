@@ -14,4 +14,7 @@ void main() {
   // Your solution should go here.
   vec4 vertPos4 = modelview * vec4(position, 1.0);
   gl_Position = projection * vertPos4;
+  // Cel shading is basically like Phong but with "stages" that are rounded to.
+  normalInterp = mat3(normalMat) * normal;
+  vertPos = vec3(vertPos4);
 }
