@@ -9,5 +9,6 @@ varying vec4 color;
 
 void main() {
   // Your solution goes here.
+  // Gouraud interpolates by vertex, so most of the work is done in the vertex shader.
   gl_FragColor = color;
 }
