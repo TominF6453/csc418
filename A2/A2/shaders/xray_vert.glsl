@@ -13,4 +13,8 @@ void main() {
   // Your solution should go here.
   vec4 vertPos4 = modelview * vec4(position, 1.0);
   gl_Position = projection * vertPos4;
+  // Xray shading, ignore light source. The lower the dot product is from the eye, 
+  // the more visible the object.
+  normalInterp = mat3(normalMat) * normal;
+  vertPos = vec3(vertPos4);
 }

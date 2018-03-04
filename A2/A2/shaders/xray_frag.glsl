@@ -21,6 +21,16 @@ uniform vec3 lightPos; // Light position in camera space
 void main() {
   // Your solution should go here.
   
-  // The model is currently rendered in black
-  gl_FragColor = vec4(vec3(0.0), 1.0);
+  // Xray shading, ignore light source. The lower the dot product is from the eye, 
+  // the more visible the diffuse.
+  
+  // Light values
+  vec3 xray; 
+  vec3 norm = normalize(normalInterp);
+  vec3 view = normalize(-vertPos);
+  
+  // Xray Lighting
+  xray = diffuseColor * Kd * (1.0 - abs(dot(view, norm)));
+  
+  gl_FragColor = vec4(xray, 1.0);
 }
