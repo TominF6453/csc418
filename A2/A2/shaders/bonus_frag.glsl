@@ -24,6 +24,16 @@ uniform vec3 lightPos; // Light position in camera space
 
 uniform sampler2D uSampler;	// 2D sampler for the earth texture
 
+float checkDraw(float val, float dist, float dotprod, float upperlimit) {
+	// Check whether or not a dark pixel should be drawn based on diffuse and position.
+	if (mod(val, dist) == 0.0) {
+		if (dotprod <= upperlimit) {
+			return 1.0;
+		}
+	}
+	return 0.0;
+}
+
 void main() {
   // Your solution should go here.
   // Only the ambient colour calculations have been provided as an example.
@@ -45,5 +55,25 @@ void main() {
   
   // No specular lighting
   
-  // Cross-hatch specific 
+  // Cross-hatch specific
+  float dist = 7.0; // Distance between lines
+  vec2 pixel = floor(vec2(gl_FragCoord.xy));
+  float a = 0.0; // Scalar for ambient colour
+  // Stage 1, lightest shading
+  float val = pixel.x - pixel.y; // Diagonal up-right, ( / )
+  a = max(a, checkDraw(val, dist, dotprod, 0.8));
+  // Stage 2, second tier shading
+  val = pixel.x + pixel.y + 1.0; // Diagonal up-left, ( \ ), with offset
+  a = max(a, checkDraw(val, dist, dotprod, 0.6));
+  // Stage 3, dark shading
+  val = pixel.x + 2.0; // Vertical line, ( | ), with offset
+  a = max(a, checkDraw(val, dist, dotprod, 0.3));
+  // Stage 4, darker shading
+  val = pixel.x + 2.0*pixel.y + 3.0; // Angled line, with offset
+  a = max(a, checkDraw(val, dist, dotprod, 0.15));
+  // Stage 5, darkest shading
+  val = pixel.y + 4.0; // Horizontal line, ( - ), with offset
+  a = max(a, checkDraw(val, dist, dotprod, 0.05));
+  
+  gl_FragColor = vec4((ambientColor * a) + (diffuseColor * (1.0 - a)), 1.0);
 }
