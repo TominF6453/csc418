@@ -27,5 +27,23 @@ uniform sampler2D uSampler;	// 2D sampler for the earth texture
 void main() {
   // Your solution should go here.
   // Only the ambient colour calculations have been provided as an example.
-  gl_FragColor = vec4(ambientColor, 1.0);
+  //gl_FragColor = vec4(ambientColor, 1.0);
+  
+  // Cross-hatching should be similar to halftone, with different calculations for patterns and thickness.
+  
+  // Light values
+  vec3 ambient, diffuse; 
+  vec3 norm = normalize(normalInterp);
+  vec3 lightdir = normalize(vec3(lightPos - vertPos));
+
+  // Ambient Lighting (the line colour)
+  ambient = ambientColor * Ka;
+  
+  // Diffuse Lighting (the bright colour)
+  float dotprod = max(dot(lightdir,norm), 0.0);
+  diffuse = diffuseColor * Kd * dotprod;
+  
+  // No specular lighting
+  
+  // Cross-hatch specific 
 }

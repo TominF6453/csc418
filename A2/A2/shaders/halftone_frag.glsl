@@ -33,10 +33,10 @@ void main() {
   vec3 norm = normalize(normalInterp);
   vec3 lightdir = normalize(vec3(lightPos - vertPos));
 
-  // Ambient Lighting
+  // Ambient Lighting (the circle colour)
   ambient = ambientColor * Ka;
   
-  // Diffuse Lighting
+  // Diffuse Lighting (the bright colour)
   float dotprod = max(dot(lightdir,norm), 0.0);
   diffuse = diffuseColor * Kd * dotprod;
   

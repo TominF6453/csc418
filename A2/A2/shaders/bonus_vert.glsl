@@ -18,4 +18,7 @@ void main(){
   // Your solution should go here.
   vec4 vertPos4 = modelview * vec4(position, 1.0);
   gl_Position = projection * vertPos4;
+  normalInterp = mat3(normalMat) * normal;
+  vertPos = vec3(vertPos4);
+  // Cross-hatching should be similar to halftone, with different calculations for patterns and thickness.
 }
