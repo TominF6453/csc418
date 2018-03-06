@@ -50,13 +50,13 @@ void main() {
   // 
   float b = thickness / 2.0;
   float a = distance(pixel, vec2(b)) / (thickness * 0.65); // Larger a value = more diffuse colour
-  if (a < 1.0) {
-	  a += diffuse.r + diffuse.g + diffuse.b; // Prevent weird artifacts
+  if (a < 1.0 && a >= 0.03) { // Only modifying values >= 0.03 means small circles will still appear in bright areas
+	  a += diffuse.r + diffuse.g + diffuse.b; // Scale circle size by diffuse color
   }
   // Exagerate circles for definition, clamp between 0 and 1 to avoid colour bleed
   float circles = clamp(pow(a,5.0), 0.0, 1.0); // Without clamping, render looks very strange
   
   // Base colour is purposely set to be the ambient colour. I wanted to be able to have
   // different coloured circles.
-  gl_FragColor = vec4(ambient + (diffuseColor * circles), 1.0);
+  gl_FragColor = vec4((ambient * (1.0 - circles)) + (diffuseColor * circles), 1.0);
 }

@@ -26,26 +26,25 @@ uniform vec3 lightPos; // Light position in camera space
 void main(){
   // Your solution should go here.
   // Only the ambient colour calculations have been provided as an example.
-  vec3 norm = normalize(mat3(normalMat) * normal);
   vec4 vertPos4 = modelview * vec4(position, 1.0);
   gl_Position = projection * vertPos4;
+  
+  vec3 ambient, diffuse, specular;
+  vec3 norm = normalize(mat3(normalMat) * normal);
+  vec3 lightdir = normalize(vec3(lightPos - vertPos4.xyz));
+  vec3 view = normalize(-vertPos4.xyz);
+  vec3 reflec = reflect(-lightdir, norm);
   //color = vec4(ambientColor, Ka); // Commented out to allow for simpler code
   
   // Ambient Lighting
-  vec3 ambient = ambientColor * Ka;
+  ambient = ambientColor * Ka;
   
   // Diffuse Lighting
-  vec3 lightdir = normalize(vec3(lightPos - vec3(vertPos4)));
   float dotprod = max(dot(lightdir, norm), 0.0);
-  vec3 diffuse = diffuseColor * Kd * dotprod;
+  diffuse = diffuseColor * Kd * dotprod;
   
   // Specular Lighting
-  vec3 specular = vec3(0.0);
-  if (dotprod > 0.0) { // There will be some reflection
-	vec3 view = normalize(-vertPos4.xyz);
-	vec3 reflec = reflect(-lightdir, norm);
-	specular = specularColor * Ks * pow(max(dot(reflec, view), 0.0), shininessVal);
-  }
+  specular = specularColor * Ks * pow(max(dot(reflec, view), 0.0), shininessVal);
   
   color = vec4(ambient + diffuse + specular, 1.0);
 }
