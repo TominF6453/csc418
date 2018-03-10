@@ -28,13 +28,13 @@ void main(){
   // Only the ambient colour calculations have been provided as an example.
   vec4 vertPos4 = modelview * vec4(position, 1.0);
   gl_Position = projection * vertPos4;
+  //color = vec4(ambientColor, Ka); // Commented out to allow for simpler code
   
   vec3 ambient, diffuse, specular;
   vec3 norm = normalize(mat3(normalMat) * normal);
   vec3 lightdir = normalize(vec3(lightPos - vertPos4.xyz));
   vec3 view = normalize(-vertPos4.xyz);
   vec3 reflec = reflect(-lightdir, norm);
-  //color = vec4(ambientColor, Ka); // Commented out to allow for simpler code
   
   // Ambient Lighting
   ambient = ambientColor * Ka;
