@@ -22,7 +22,34 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	//
 	// HINT: Remember to first transform the ray into object space  
 	// to simplify the intersection test.
-
+	
+	Vector3D n(0.0,0.0,1.0); // Square normal
+	
+	// Cast ray to object space
+	Vector3D raydir = worldToModel * ray.dir;
+	Point3D rayorigin = worldToModel * ray.origin;
+	float t_val = -(rayorigin[2]/raydir[2]);
+	if (t_val <= 0) { // Ray moving away from square
+		return false; 
+	}
+	
+	// Check x and y values
+	float x = rayorigin[0] + t_val * raydir[0];
+	float y = rayorigin[1] + t_val * raydir[1];
+	Point3D intersect(x,y,0.0);
+	
+	if ((x <= 0.5 && x >= -0.5) && (y <= 0.5 && y >= -0.5)){
+		// Values fall within the square, intersection
+		if (ray.intersection.none || t_val < ray.intersection.t_value) {
+			// If the ray hasn't intersected, or this intersection is closer, update
+			ray.intersection.none = false;
+			ray.intersection.t_value = t_val;
+			ray.intersection.normal = worldToModel.transpose()*n;
+			ray.intersection.normal.normalize();
+			ray.intersection.point = modelToWorld * intersect;
+			return true;
+		}
+	}
 	return false;
 }
 
