@@ -8,7 +8,7 @@
 
 #include <cmath>
 #include "light_source.h"
-
+const int MAX_BOUNCE = 2;
 void PointLight::shade(Ray3D& ray) {
 	// TODO: implement this function to fill in values for ray.col 
 	// using phong shading.  Make sure your vectors are normalized, and

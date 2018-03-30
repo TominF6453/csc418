@@ -90,7 +90,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list) {
             ray_new.dir = ray.dir - (2 * (ray.intersection.normal.dot(ray.dir)) * ray.intersection.normal);
             ray_new.dir.normalize();
             Color new_col = shadeRay(ray_new, scene, light_list, k_bounce+1);
-            col += new_col;
+            return new_col;
             
         }
     }
