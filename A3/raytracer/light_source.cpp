@@ -42,6 +42,14 @@ void PointLight::shade(Ray3D& ray) {
 	
 	// Set color
 	ray.col = Ia + Id + Is;
+	
+	// Custom renderings for part A
+	// Diffuse and Ambient only 
+	//ray.col = Ia + Id;
+	// Scene Signature
+	//ray.col = (*ray.intersection.mat).diffuse;
+	
+	// Clamp the color
 	ray.col.clamp();
 }
 
