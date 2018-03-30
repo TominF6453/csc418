@@ -40,6 +40,7 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	
 	if ((x <= 0.5 && x >= -0.5) && (y <= 0.5 && y >= -0.5)){
 		// Values fall within the square, intersection
+		// Update ray
 		if (ray.intersection.none || t_val < ray.intersection.t_value) {
 			// If the ray hasn't intersected, or this intersection is closer, update
 			ray.intersection.none = false;
@@ -64,7 +65,58 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	//
 	// HINT: Remember to first transform the ray into object space  
 	// to simplify the intersection test.
-
+	
+	// Cast ray to object space
+	Vector3D raydir = worldToModel * ray.dir;
+	Point3D rayorigin = worldToModel * ray.origin;
+	
+	Point3D c(0.0,0.0,0.0); // Center of sphere is origin
+	float r = 1.0; // Radius of unit sphere is 1
+	
+	// Quadratic form to find intersection ( At^2 + Bt + C = 0 )
+	float A = raydir.dot(raydir);
+	float B = 2*(raydir.dot(rayorigin-c));
+	float C = (rayorigin-c).dot(rayorigin-c) - 1; // r^2 is 1, unit sphere.
+	
+	// Solve using quadratic formula
+	float D = B*B - 4*A*C; // discriminant of the quadratic
+	if (D < 0) {
+		// No intersection
+		return false;
+	}
+	float t0 = (-B + sqrt(D))/(2.0*A); // t values for both + and -
+	float t1 = (-B - sqrt(D))/(2.0*A);
+	
+	// Find correct t value via minimum (first intersection)
+	float t_val;
+	if (t0 < 0 && t1 < 0) {
+		return false; // Neither are intersections
+	} else if (t0 < 0) {
+		t_val = t1;
+	} else if (t1 < 0) {
+		t_val = t0;
+	} else {
+		t_val = fmin(t0,t1);
+	}
+	
+	// Check point values
+	float x = rayorigin[0] + t_val * raydir[0];
+	float y = rayorigin[1] + t_val * raydir[1];
+	float z = rayorigin[2] + t_val * raydir[2];
+	Point3D intersect(x,y,z);
+	Vector3D n(x,y,z);
+	n.normalize();
+	
+	// Update ray
+	if (ray.intersection.none || t_val < ray.intersection.t_value) {
+		// If the ray hasn't intersected, or this intersection is closer, update
+		ray.intersection.none = false;
+		ray.intersection.t_value = t_val;
+		ray.intersection.normal = worldToModel.transpose()*n;
+		ray.intersection.normal.normalize();
+		ray.intersection.point = modelToWorld * intersect;
+		return true;
+	}
 	return false;
 }
 
