@@ -81,6 +81,19 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list) {
 
 	// You'll want to call shadeRay recursively (with a different ray, 
 	// of course) here to implement reflection/refraction effects.  
+	if(!ray.intersection.none) {
+            //generate new ray
+        if(k_bounce < MAX_BOUNCE){
+            Ray3D ray_new;
+            ray_new.origin = ray.intersection.point;
+            
+            ray_new.dir = ray.dir - (2 * (ray.intersection.normal.dot(ray.dir)) * ray.intersection.normal);
+            ray_new.dir.normalize();
+            Color new_col = shadeRay(ray_new, scene, light_list, k_bounce+1);
+            col += new_col;
+            
+        }
+    }
 
 	return col; 
 }	
