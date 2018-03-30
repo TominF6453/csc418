@@ -26,10 +26,14 @@ private:
 	// Traversal code for the scene, the ray is transformed into 
 	// the object space of each node where intersection is performed.
 	void traverseScene(Scene& scene, Ray3D& ray);
+	
+	// When computing shading, produce a new ray from intersection point
+	// to the light source to compute shadows.
+	void computeShadow(Ray3D& ray, LightSource* light, Scene& scene);
 
 	// After intersection, calculate the color of the ray by shading it
 	// with all light sources in the scene.
-	void computeShading(Ray3D& ray, LightList& light_list);
+	void computeShading(Ray3D& ray, LightList& light_list, Scene& scene);
 
 	// Precompute the modelToWorld and worldToModel transformations for each
     // object in the scene.

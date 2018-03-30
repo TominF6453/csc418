@@ -35,13 +35,36 @@ void Raytracer::computeTransforms(Scene& scene) {
 	}
 }
 
-void Raytracer::computeShading(Ray3D& ray, LightList& light_list) {
+void Raytracer::computeShadow(Ray3D& ray, LightSource* light, Scene& scene) {
+	// Helper function to compute shadows
+	
+	// Get normal colour from ray
+	light->shade(ray);
+	
+	// Possible shadow position, generate ray from intersection point to light
+	Point3D origin = ray.intersection.point;
+	Vector3D dir = light->get_position() - origin;
+	dir.normalize();
+	// Move origin slightly off intersection such that it doesn't intersect with itself
+	Ray3D shadowRay(origin + 0.01*dir,dir); 
+	
+	// Traverse ray to get any intersections between intersection point and the light source
+	traverseScene(scene, shadowRay);
+	
+	// If ray intersected with object, the point is in shadow
+	if (!shadowRay.intersection.none) {
+		ray.col = 0.2*ray.col;
+	}
+}
+
+void Raytracer::computeShading(Ray3D& ray, LightList& light_list, Scene& scene) {
 	for (size_t  i = 0; i < light_list.size(); ++i) {
 		LightSource* light = light_list[i];
 		
 		// Each lightSource provides its own shading function.
 		// Implement shadows here if needed.
-		light->shade(ray);        
+		//light->shade(ray);  OLD
+		computeShadow(ray, light, scene);
 	}
 }
 
@@ -52,7 +75,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list) {
 	// Don't bother shading if the ray didn't hit 
 	// anything.
 	if (!ray.intersection.none) {
-		computeShading(ray, light_list); 
+		computeShading(ray, light_list, scene); 
 		col = ray.col;  
 	}
 
