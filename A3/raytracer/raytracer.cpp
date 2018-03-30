@@ -68,7 +68,7 @@ void Raytracer::computeShading(Ray3D& ray, LightList& light_list, Scene& scene) 
 	}
 }
 
-Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list) {
+Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int k_bounce = 0) {
 	Color col(0.0, 0.0, 0.0); 
 	traverseScene(scene, ray); 
 
@@ -77,23 +77,22 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list) {
 	if (!ray.intersection.none) {
 		computeShading(ray, light_list, scene); 
 		col = ray.col;  
-	}
-
-	// You'll want to call shadeRay recursively (with a different ray, 
-	// of course) here to implement reflection/refraction effects.  
-	if(!ray.intersection.none) {
-            //generate new ray
+		
+		// You'll want to call shadeRay recursively (with a different ray, 
+		// of course) here to implement reflection/refraction effects. 
+		// Generate new ray and recursively shadeRay up to MAX_BOUNCE
         if(k_bounce < MAX_BOUNCE){
-            Ray3D ray_new;
-            ray_new.origin = ray.intersection.point;
-            
+            Ray3D ray_new;        
             ray_new.dir = ray.dir - (2 * (ray.intersection.normal.dot(ray.dir)) * ray.intersection.normal);
             ray_new.dir.normalize();
+			// Avoid intersecting with original object
+			ray_new.origin = ray.intersection.point + 0.01*ray_new.dir;
             Color new_col = shadeRay(ray_new, scene, light_list, k_bounce+1);
-            col+= new_col;
-            
+			// Add new color with a small scalar multiple
+			col = col + 0.2*new_col;
         }
-    }
+		col.clamp();
+	}
 
 	return col; 
 }	

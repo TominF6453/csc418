@@ -12,6 +12,8 @@
 #include "scene_object.h"
 #include "light_source.h"
 
+#define MAX_BOUNCE 2
+
 class Raytracer {
 public:
 	// Renders 3D scene to an image given camera and lights setup.
