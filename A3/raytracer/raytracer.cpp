@@ -59,6 +59,7 @@ void Raytracer::computeShadow(Ray3D& ray, LightSource* light, Scene& scene) {
 }
 
 void Raytracer::computeShading(Ray3D& ray, LightList& light_list, Scene& scene) {
+	Color final_col(0.0,0.0,0.0);
 	for (size_t  i = 0; i < light_list.size(); ++i) {
 		LightSource* light = light_list[i];
 		
@@ -66,7 +67,9 @@ void Raytracer::computeShading(Ray3D& ray, LightList& light_list, Scene& scene) 
 		// Implement shadows here if needed.
 		//light->shade(ray);  OLD
 		computeShadow(ray, light, scene);
+		final_col = final_col + (1.0f/light_list.size()) * ray.col;
 	}
+	ray.col = final_col;
 }
 
 Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int k_bounce = 0) {
