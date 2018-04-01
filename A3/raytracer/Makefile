@@ -6,6 +6,7 @@ LIBS = -lm
 raytracer:  main.o raytracer.o util.o light_source.o scene_object.o bmp_io.o
 	$(CC) $(CFLAGS) -o raytracer \
 	main.o raytracer.o util.o light_source.o scene_object.o bmp_io.o $(LIBS)
+	./raytracer
 
 clean:
 	-rm -f core *.o
