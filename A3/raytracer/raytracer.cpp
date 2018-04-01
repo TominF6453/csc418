@@ -45,6 +45,7 @@ void Raytracer::computeShadow(Ray3D& ray, LightSource* light, Scene& scene) {
 	Point3D origin = ray.intersection.point;
 	Vector3D dir = light->get_position() - origin;
 	dir.normalize();
+	
 	// Move origin slightly off intersection such that it doesn't intersect with itself
 	Ray3D shadowRay(origin + 0.01*dir,dir); 
 	
@@ -116,11 +117,11 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 			imagePlane[1] = (-double(image.height)/2 + 0.5 + i)/factor;
 			imagePlane[2] = -1;
 
+			// TODO: Convert ray to world space  DONE
 			Point3D world_origin = viewToWorld * imagePlane;
 			Vector3D world_dir = world_origin - camera.eye;
 			world_dir.normalize();
 			Ray3D ray(world_origin, world_dir);
-			// TODO: Convert ray to world space  
 			
 			Color col = shadeRay(ray, scene, light_list); 
 			image.setColorAtPixel(i, j, col);			
