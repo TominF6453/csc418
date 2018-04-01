@@ -29,10 +29,11 @@ int main(int argc, char* argv[])
 	// Define materials for shading.
 	Material gold(Color(0.3, 0.3, 0.3), Color(0.75164,0.60648,0.22648),
 		Color(0.628281, 0.555802, 0.366065),
-		51.2);
+		51.2, false, 1.3);
+	Material glass(Color(0.1, 0.0, 0.0), Color(0.0, 0.0, 0.0), Color(0.0, 0.0, 0.0), 51.2, true, 1.6);
 	Material jade(Color(0, 0, 0), Color(0.54,0.89,0.63),
 		Color(0.316228,0.316228,0.316228),
-		12.8);
+		12.8, false, 1.2);
 
 	// Defines a point light source.
 	PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.9,0.9,0.9));
@@ -43,6 +44,8 @@ int main(int argc, char* argv[])
 	scene.push_back(sphere);
 	SceneNode* plane = new SceneNode(new UnitSquare(), &jade);
 	scene.push_back(plane);
+	SceneNode* sphere_glass = new SceneNode(new UnitSphere(), &glass);
+	scene.push_back(sphere_glass);
 
 	// Apply some transformations to the sphere and unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
@@ -50,6 +53,9 @@ int main(int argc, char* argv[])
 	sphere->rotate('x', -45);
 	sphere->rotate('z', 45);
 	sphere->scale(Point3D(0, 0, 0), factor1);
+
+    double factor3[3] = { 0.9, 0.5, 0.8 };
+    sphere_glass->translate(Vector3D(3, 1, -3));
 
 	double factor2[3] = { 6.0, 6.0, 6.0 };
 	plane->translate(Vector3D(0, 0, -7));

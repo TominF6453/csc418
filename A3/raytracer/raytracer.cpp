@@ -51,8 +51,9 @@ void Raytracer::computeShadow(Ray3D& ray, LightSource* light, Scene& scene) {
 	// Traverse ray to get any intersections between intersection point and the light source
 	traverseScene(scene, shadowRay);
 	
-	// If ray intersected with object, the point is in shadow
-	if (!shadowRay.intersection.none) {
+	// If ray intersected with object, the point is in shadow, if refractive: no shadow
+	if (!shadowRay.intersection.none && !shadowRay.intersection.mat->refractive) {
+	    
 		ray.col = 0.2*ray.col;
 	}
 }
@@ -82,14 +83,40 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int k
 		// of course) here to implement reflection/refraction effects. 
 		// Generate new ray and recursively shadeRay up to MAX_BOUNCE
         if(k_bounce < MAX_BOUNCE){
-            Ray3D ray_new;        
-            ray_new.dir = ray.dir - (2 * (ray.intersection.normal.dot(ray.dir)) * ray.intersection.normal);
-            ray_new.dir.normalize();
-			// Avoid intersecting with original object
-			ray_new.origin = ray.intersection.point + 0.01*ray_new.dir;
-            Color new_col = shadeRay(ray_new, scene, light_list, k_bounce+1);
-			// Add new color with a small scalar multiple
-			col = col + 0.2*new_col;
+            
+            //normal at the intersection
+            Vector3D ray_norm = ray.intersection.normal;
+            //direction of incidence
+            Vector3D I_dir = ray.dir;
+            
+            //if refractive then calculate the refraction.
+            if(ray.intersection.mat->refractive){
+                
+                //direction of refraction, using snells law
+                double cos_idx = ray_norm.dot(I_dir);
+                double idx = ray.intersection.mat->index_of_refraction;
+                Vector3D dir = idx * I_dir - (-cos_idx + idx*cos_idx) * ray_norm;
+                
+                //create new ray
+                Ray3D new_ray;
+                new_ray.dir = dir;
+                new_ray.dir.normalize();
+                new_ray.origin = ray.intersection.point + 0.01 * new_ray.dir;
+                
+                //shade ray
+                Color refrCol = shadeRay(new_ray, scene, light_list, k_bounce+1);
+                col = col + refrCol;
+            } else {
+                //for reflection
+                Ray3D ray_new;        
+                ray_new.dir = ray.dir - (2 * (ray.intersection.normal.dot(ray.dir)) * ray.intersection.normal);
+                ray_new.dir.normalize();
+			    // Avoid intersecting with original object
+			    ray_new.origin = ray.intersection.point + 0.01*ray_new.dir;
+                Color new_col = shadeRay(ray_new, scene, light_list, k_bounce+1);
+			    // Add new color with a small scalar multiple
+			    col = col + 0.2*new_col; 
+			}
         }
 		col.clamp();
 	}
