@@ -18,8 +18,8 @@ int main(int argc, char* argv[])
 	LightList light_list;
 	Scene scene;   
 
-	int width = 320;
-	int height = 240;
+	int width = 640;
+	int height = 480;
 
 	if (argc == 3) {
 		width = atoi(argv[1]);
@@ -44,8 +44,8 @@ int main(int argc, char* argv[])
 	scene.push_back(sphere);
 	SceneNode* plane = new SceneNode(new UnitSquare(), &jade);
 	scene.push_back(plane);
-	SceneNode* sphere_glass = new SceneNode(new UnitSphere(), &glass);
-	scene.push_back(sphere_glass);
+	//SceneNode* sphere_glass = new SceneNode(new UnitSphere(), &glass);
+	//scene.push_back(sphere_glass);
 
 	// Apply some transformations to the sphere and unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
@@ -54,13 +54,13 @@ int main(int argc, char* argv[])
 	sphere->rotate('z', 45);
 	sphere->scale(Point3D(0, 0, 0), factor1);
 
-    double factor3[3] = { 0.9, 0.5, 0.8 };
-    sphere_glass->translate(Vector3D(3, 1, -3));
-
 	double factor2[3] = { 6.0, 6.0, 6.0 };
 	plane->translate(Vector3D(0, 0, -7));
 	plane->rotate('z', 45);
 	plane->scale(Point3D(0, 0, 0), factor2);
+	
+	// Apply transformations to new glass sphere
+	//sphere_glass->translate(Vector3D(3, 1, -3));
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	

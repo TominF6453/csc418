@@ -1,0 +1,2 @@
+Source for refraction:
+https://stackoverflow.com/questions/42218704/how-to-properly-handle-refraction-in-raytracing

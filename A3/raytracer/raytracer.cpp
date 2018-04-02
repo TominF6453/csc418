@@ -54,7 +54,6 @@ void Raytracer::computeShadow(Ray3D& ray, LightSource* light, Scene& scene) {
 	
 	// If ray intersected with object, the point is in shadow, if refractive: no shadow
 	if (!shadowRay.intersection.none && !shadowRay.intersection.mat->refractive) {
-	    
 		ray.col = 0.2*ray.col;
 	}
 }
@@ -94,8 +93,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int k
             Vector3D I_dir = ray.dir;
             
             //if refractive then calculate the refraction.
-            if(ray.intersection.mat->refractive){
-                
+            if(ray.intersection.mat->refractive){                
                 //direction of refraction, using snells law
                 double cos_idx = ray_norm.dot(I_dir);
                 double idx = ray.intersection.mat->index_of_refraction;
