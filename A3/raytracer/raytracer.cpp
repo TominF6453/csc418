@@ -110,17 +110,17 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int k
                 //shade ray
                 Color refrCol = shadeRay(new_ray, scene, light_list, k_bounce+1);
                 col = col + refrCol;
-            } else {
-                //for reflection
-                Ray3D ray_new;        
-                ray_new.dir = ray.dir - (2 * (ray.intersection.normal.dot(ray.dir)) * ray.intersection.normal);
-                ray_new.dir.normalize();
-			    // Avoid intersecting with original object
-			    ray_new.origin = ray.intersection.point + 0.01*ray_new.dir;
-                Color new_col = shadeRay(ray_new, scene, light_list, k_bounce+1);
-			    // Add new color with a small scalar multiple
-			    col = col + 0.2*new_col; 
-			}
+            } 
+            //for reflection
+            Ray3D ray_new;        
+            ray_new.dir = ray.dir - (2 * (ray.intersection.normal.dot(ray.dir)) * ray.intersection.normal);
+            ray_new.dir.normalize();
+		    // Avoid intersecting with original object
+		    ray_new.origin = ray.intersection.point + 0.01*ray_new.dir;
+            Color new_col = shadeRay(ray_new, scene, light_list, k_bounce+1);
+		    // Add new color with a small scalar multiple
+		    col = col + 0.2*new_col; 
+		
         }
 		col.clamp();
 	}
