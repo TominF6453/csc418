@@ -1,6 +1,6 @@
 CSC418 Assignment 3 Raytracing -- REPORT
 
-Group:	Filip Tomin		Kevin Patel
+Group:	Filip Tomin		Kevinkumar Patel
 		1001329984		1001331267
 		
 -- Overall Submission --

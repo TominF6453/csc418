@@ -2,8 +2,8 @@
 Assignment 3 Checklist/Grading sheet
 -------------------------------------
 
-Name: Filip Tomin
-Student ID: 1001329984
+Name: Kevinkumar Patel
+Student ID: 1001331267
 
 -----------------------------------------------------------------------------------------
 A. PLEASE ANSWER THE FOLLOWING QUESTIONS (your assignment will not be graded otherwise!)
@@ -24,7 +24,7 @@ A. PLEASE ANSWER THE FOLLOWING QUESTIONS (your assignment will not be graded oth
 
    If you checked yes, please supply the following
 
-       Student name: Kevin Patel
+       Student name: Filip Tomin
        Portion(s) of assignment completed by that student (see checklist below)
 
 -----------------------------------------------------------------------------------------
