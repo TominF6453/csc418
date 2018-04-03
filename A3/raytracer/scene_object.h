@@ -77,3 +77,10 @@ public:
 				const Matrix4x4& modelToWorld);
 };
 
+// Class and intersect function definition for new geometry: cylinder
+class UnitCylinder : public SceneObject {
+public:
+	bool intersect(Ray3D& ray, const Matrix4x4& worldToModel,
+				const Matrix4x4& modelToWorld);
+};
+
