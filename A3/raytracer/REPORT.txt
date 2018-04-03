@@ -3,3 +3,6 @@ https://stackoverflow.com/questions/42218704/how-to-properly-handle-refraction-i
 
 Source for equations for cylinder intersection:
 https://www.cl.cam.ac.uk/teaching/1999/AGraphHCI/SMAG/node2.html
+
+DOF
+http://ray-tracing-conept.blogspot.ca/search?q=image+plane+setup

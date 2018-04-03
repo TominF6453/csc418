@@ -127,60 +127,59 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int k
 }	
 
 void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Image& image) {
-	computeTransforms(scene);
+    computeTransforms(scene);
 
-	Matrix4x4 viewToWorld;
-	double factor = (double(image.height)/2)/tan(camera.fov*M_PI/360.0);
+    Matrix4x4 viewToWorld;
+    double factor = (double(image.height)/2)/tan(camera.fov*M_PI/360.0);
 
-	viewToWorld = camera.initInvViewMatrix();
+    viewToWorld = camera.initInvViewMatrix();
 
-	float pixel_w = 1.0f / (float) image.width;
-	float pixel_h = 1.0f/(float) image.height;
-	
-	// Construct a ray for each pixel.
-	for (int i = 0; i < image.height; i++) {
-		for (int j = 0; j < image.width; j++) {
-			// Sets up ray origin and direction in view space, 
-			// image plane is at z = -1.
-			Point3D origin(0, 0, 0);
-			Point3D imagePlane;
-			imagePlane[0] = (-double(image.width)/2 + 0.5 + j)/factor;
-			imagePlane[1] = (-double(image.height)/2 + 0.5 + i)/factor;
-			imagePlane[2] = -1;
-
-			// TODO: Convert ray to world space  DONE
-			Point3D world_origin = viewToWorld * imagePlane;
-			Vector3D world_dir = world_origin - camera.eye;
-			
-			//for depth of field
-			Color f_col(0.0, 0.0, 0.0);
-			// sample 8 times then take avg
-			for(int d=0; d<4; d++){
-				//choose random number b/w 0 to 0.112;
-				float r = ((float(rand())) / float(RAND_MAX)) * 0.056;
-				//generate new cam eye position based on the random number
-				Point3D eye = camera.eye;
-				eye[0] += r; 
-				r = ((float(rand())) / float(RAND_MAX)) * 0.056;
-				eye[1] += r;
-				r = ((float(rand())) / float(RAND_MAX)) * 0.056;
-				eye[2] += r;
-				//make new camera, with new eye, same view and up
-				Camera cam(eye, camera.view, camera.up, camera.fov);
-				Matrix4x4 vTW = cam.initInvViewMatrix();
-				//generate new ray
-				Point3D w_origin = vTW * imagePlane;
-				Vector3D w_dir = w_origin - cam.eye;
-				w_dir.normalize();
-				Ray3D ray(w_origin, w_dir); 
-				//apply shading
-				Color col = shadeRay(ray, scene, light_list);
-				col  = 0.25 * col;
-				f_col = f_col + col;
-			}
-			image.setColorAtPixel(i, j, f_col);	
-						
-		}
-	}
+    // Construct a ray for each pixel.
+    for (int i = 0; i < image.height; i++) {
+        for (int j = 0; j < image.width; j++) {
+            // Sets up ray origin and direction in view space, 
+            // image plane is at z = -1.
+            Point3D origin(0, 0, 0);
+            Point3D imagePlane;
+            Color final_col(0.0, 0.0, 0.0);
+            // 4x Supersampling AA - 4 rays per pixel, averaged out
+            for (float i_frag = i; i_frag < i + 1; i_frag += 0.5f) {
+                for (float j_frag = j; j_frag < j + 1; j_frag += 0.5f) {
+                    // 4 rays per pixel, by adding 0.5f to the planar directions
+                    imagePlane[0] = (-double(image.width)/2 + 0.5 + j_frag)/factor;
+                    imagePlane[1] = (-double(image.height)/2 + 0.5 + i_frag)/factor;
+                    imagePlane[2] = -1;
+                    
+                    // 2x Depth of Field
+					for(int d=0; d<2; d++){
+						//choose random number b/w -0.019 to 0.019;
+						float r = ((float(rand())) / float(RAND_MAX)) * 0.028 - 0.019;
+						//generate new cam eye position based on the random number
+						Point3D eye = camera.eye;
+						eye[0] += r; 
+						r = ((float(rand())) / float(RAND_MAX)) * 0.028 - 0.019;
+						eye[1] += r;
+						r = ((float(rand())) / float(RAND_MAX)) * 0.028 - 0.019;
+						eye[2] += r;
+						//make new camera, with new eye, same view and up
+						Camera cam(eye, camera.view, camera.up, camera.fov);
+						Matrix4x4 vTW = cam.initInvViewMatrix();
+						//generate new ray
+						Point3D w_origin = vTW * imagePlane;
+						Vector3D w_dir = w_origin - cam.eye;
+						w_dir.normalize();
+						Ray3D ray(w_origin, w_dir); 
+						//apply shading
+						Color col = shadeRay(ray, scene, light_list);
+						// Apply the coefficient and add to the final colour (0.25 since 4 rays)
+						col = 0.5 * 0.25 * col;
+						final_col = final_col + col;
+					}
+                }
+            }
+            
+            image.setColorAtPixel(i, j, final_col);            
+        }
+    }
 }
 
