@@ -34,6 +34,8 @@ int main(int argc, char* argv[])
 	Material jade(Color(0, 0, 0), Color(0.54,0.89,0.63),
 		Color(0.316228,0.316228,0.316228),
 		12.8, false, 1.2);
+	Material ruby(Color(0.2,0.2,0.2), Color(0.87843,0.06667,0.37255),
+		Color(0.8,0.8,0.8), 51.2, false, 1.0);
 
 	// Defines a point light source.
     PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.9,0.9,0.9));
@@ -46,6 +48,8 @@ int main(int argc, char* argv[])
 	scene.push_back(plane);
 	//SceneNode* sphere_glass = new SceneNode(new UnitSphere(), &glass);
 	//scene.push_back(sphere_glass);
+	//SceneNode* cylinder = new SceneNode(new UnitCylinder(), &ruby);
+	//scene.push_back(cylinder);
 
 	// Apply some transformations to the sphere and unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
@@ -61,6 +65,15 @@ int main(int argc, char* argv[])
 	
 	// Apply transformations to new glass sphere
 	//sphere_glass->translate(Vector3D(3, 1, -3));
+	
+	// Apply transformations to ruby cylinder
+	/*
+	double factor3[3] = {1.0,1.0,2.0};
+	cylinder->translate(Vector3D(-2.5, -1, -5));
+	cylinder->rotate('y', 80);
+	cylinder->rotate('x', 20);
+	cylinder->scale(Point3D(0,0,0), factor3);
+	*/
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
