@@ -1,8 +1,85 @@
+CSC418 Assignment 3 Raytracing -- REPORT
+
+Group:	Filip Tomin		Kevin Patel
+		1001329984		1001331267
+		
+-- Overall Submission --
+Our raytracer models four objects: a flat jade square, of which sits behind the other three objects,
+a gold egg which sits just above and in the center of the jade square, casting a shadow upon the square,
+a ruby cylinder sits just above and center-left of the square, and a refractive red glass sphere that sits
+above and center right of the square. Reflections of the square, egg and cylinder are visible in each other.
+
+-- Code and File Structure --
+Raycasting - a ray is given an origin and a direction, modified by the view to world matrix defined by
+			the camera. The ray is cast using shadeRay() which traverses the scene and returns a colour.
+			
+Ray-sphere Intersection - given a ray, the function UnitSphere::intersect in scene_object.cpp transforms
+			the ray into the unit model space and computes the intersection via solving the quadratic
+			formula. 
+			The function fills in intersection details for the ray if there is one.
+			
+Ray-square Intersection - given a ray, the function UnitSquare::intersect in scene_object.cpp transforms
+			the ray into the unit model space and computes the intersection via subtituting the ray
+			equation into the square equation to find a scalar multiple for the direction vector, then
+			checking if the point lies within the boundaries of the square. 
+			The function fills in intersection details for the ray if there is one.
+			
+Phong Illumination - light_source.cpp handles illumination. When called, it determines the colour the ray
+			should return based on the ambient, diffuse and specular properties of the material 
+			being intersected with. The PointLight::shade() function uses regular Phong illumination
+			calculations to return the correct color.
+			
+Secondary Reflections - Raytracer::shadeRay takes rays with a k_bounce value, dictating how many times
+			they've bounced. If it's under the minimum, the function calculates a reflected ray and
+			recursively calls itself on the new ray, adding the colour return by the recursive call
+			to the final colour to be returned.
+			
+Hard Shadows - shadows are done in Raytracer::computeShading(), with the help of computeShadow(). 
+			Here, whenever shading is computed for a ray, a new ray is sent in the direction of each
+			light source in the scene. If there are any intersections between the object and the light
+			source, the return colour is scaled down by a factor of 0.2 to simulate being in shadow.
+
+-- Implemented Features --
+Along with the features described in Part A (basic raytracing w/ Phong illumination) and the
+advanced ray-tracing features described in the beginning of Part B (secondary reflections & 
+hard shadows). We have implemented:
+
+Anti-aliasing - 4X supersampling anti-aliasing, done by ray tracing through each pixel four times
+				each with small offsets and then taking the average of the colours returned.
+				This occurs within the Raytracer::render() function.
+				
+Depth of Field - 2X DoF, done by randomly repositioning the camera eye by slight amounts per pixel
+				twice, and then taking the average of the colours returned.
+				This occurs within the Raytracer::render() function.
+				
+Extended light sources - done by adding a grid of point lights to simulate area light, providing 
+				the effect of soft shadows.
+				This occurs within main.cpp.
+				
+Refraction - done by assigning a material a "refractive" boolean and a refractive index, and then
+				upon intersection, recalculating the ray direction based on the refractive index.
+				This occurs within the Raytracer::shadeRay() function.
+				
+Non-trivial Object (cylinder) - done by handling separate intersections for the caps and side of
+				the cylinder and choosing between the minimum of multiple intersections. 
+				This occurs within scene_object.cpp, defined by the function UnitCylinder::intersect()
+
+-- Member Roles --
+Filip Tomin:				Kevin Patel:
+Raycasting					Phong Illumination
+Ray-sphere Intersection		Secondary Reflections
+Ray-square Intersection		Depth of Field
+Hard Shadows				Refraction
+Anti-aliasing
+Extended light sources
+Non-trivial Object
+
+-- Resources --
 Source for refraction:
 https://stackoverflow.com/questions/42218704/how-to-properly-handle-refraction-in-raytracing
 
 Source for equations for cylinder intersection:
 https://www.cl.cam.ac.uk/teaching/1999/AGraphHCI/SMAG/node2.html
 
-DOF
+Source for DOF calculations:
 http://ray-tracing-conept.blogspot.ca/search?q=image+plane+setup
