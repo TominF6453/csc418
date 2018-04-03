@@ -152,23 +152,19 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 			Point3D world_origin = viewToWorld * imagePlane;
 			Vector3D world_dir = world_origin - camera.eye;
 			
-			//world_dir[0] += r;
-			//world_dir[1] += r;
-			//world_dir[2] += r;
-			//world_dir.normalize();
-			
-			//Ray3D ray;
-			
 			//for depth of field
 			Color f_col(0.0, 0.0, 0.0);
-			//sample 8 times then take avg
-			for(int d=0; d<8; d++){
+			// sample 8 times then take avg
+			for(int d=0; d<4; d++){
 				//choose random number b/w 0 to 0.112;
-				float r = ((float(rand())) / float(RAND_MAX)) * 0.112;
+				float r = ((float(rand())) / float(RAND_MAX)) * 0.056;
 				//generate new cam eye position based on the random number
 				Point3D eye = camera.eye;
 				eye[0] += r; 
+				r = ((float(rand())) / float(RAND_MAX)) * 0.056;
 				eye[1] += r;
+				r = ((float(rand())) / float(RAND_MAX)) * 0.056;
+				eye[2] += r;
 				//make new camera, with new eye, same view and up
 				Camera cam(eye, camera.view, camera.up, camera.fov);
 				Matrix4x4 vTW = cam.initInvViewMatrix();
@@ -179,7 +175,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 				Ray3D ray(w_origin, w_dir); 
 				//apply shading
 				Color col = shadeRay(ray, scene, light_list);
-				col  = 0.125 * col;
+				col  = 0.25 * col;
 				f_col = f_col + col;
 			}
 			image.setColorAtPixel(i, j, f_col);	
